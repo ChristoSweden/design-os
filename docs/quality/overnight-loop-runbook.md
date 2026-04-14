@@ -40,7 +40,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] GitHub Actions CI: `.github/workflows/ci.yml` runs lint (`--max-warnings=0`) + typecheck + test + build on push to main and claude/** branches, plus PRs to main (iter 6)
 - [ ] Remove the `eslint-disable-next-line react-hooks/static-components` comments in `ScreenDesignPage` and `ShellDesignPage` by switching to eagerly-created module-level lazy components (possible only once the parameterized cache can be flattened — may not be feasible)
 - [ ] Add prop validation to dynamically loaded screen designs (Zod or simple shape check)
-- [ ] `DesignPage` — move 60-line Tailwind color map out of the component into a shared config
+- [x] `DesignPage` — Tailwind color map extracted to `src/lib/tailwind-colors.ts` as typed config + `getTailwindSwatch()` helper + 8 unit tests (iter 12)
 - [ ] Split `buttonVariants` and `badgeVariants` into their own files if they need to be exported later (currently unused, so deferred)
 - [ ] Audit and upgrade: `baseline-browser-mapping` is stale per lint output
 - [ ] Silent-failure audit: every parser that returns `null` should surface a user-visible warning
@@ -71,6 +71,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 9 | 8 | 69 | 0 | 0 | ✅ |
 | 10 | 8 | 75 | 0 | 0 | ✅ |
 | 11 | 9 | 79 | 0 | 0 | ✅ |
+| 12 | 10 | 87 | 0 | 0 | ✅ |
 
 ## Metadata
 
