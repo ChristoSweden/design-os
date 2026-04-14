@@ -229,3 +229,44 @@ export function getExportZipUrl(): string | null {
 
 // Re-export utility functions for checking individual pieces
 export { hasDataModel, hasDesignSystem, hasShell }
+
+/**
+ * Validate that every section listed in the roadmap has at least one
+ * artifact on disk (spec.md, data.json, or a screen design .tsx),
+ * and vice-versa. Pure-ish: takes the roadmap and the on-disk section
+ * ID list as inputs so it can be unit-tested without touching globs.
+ *
+ * Produces two lists:
+ *  - `missingOnDisk`: section IDs declared in the roadmap with no
+ *    matching directory under /product/sections or /src/sections.
+ *  - `orphanedOnDisk`: section IDs present on disk but not referenced
+ *    by the roadmap — usually a renamed/forgotten section.
+ *
+ * Neither list is fatal; callers decide whether to surface a warning.
+ */
+export interface SectionIntegrityReport {
+  missingOnDisk: string[]
+  orphanedOnDisk: string[]
+}
+
+export function checkSectionIntegrity(
+  roadmap: ProductRoadmap | null,
+  diskSectionIds: readonly string[]
+): SectionIntegrityReport {
+  const roadmapIds = new Set(
+    (roadmap?.sections ?? []).map((s) => s.id)
+  )
+  const diskIds = new Set(diskSectionIds)
+
+  const missingOnDisk: string[] = []
+  for (const id of roadmapIds) {
+    if (!diskIds.has(id)) missingOnDisk.push(id)
+  }
+
+  const orphanedOnDisk: string[] = []
+  for (const id of diskIds) {
+    if (!roadmapIds.has(id)) orphanedOnDisk.push(id)
+  }
+
+  return { missingOnDisk, orphanedOnDisk }
+}

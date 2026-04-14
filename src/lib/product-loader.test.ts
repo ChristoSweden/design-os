@@ -4,7 +4,9 @@ import {
   parseProductRoadmap,
   slugify,
   disambiguateSlugs,
+  checkSectionIntegrity,
 } from './product-loader'
+import type { ProductRoadmap } from '@/types/product'
 
 describe('parseProductOverview', () => {
   it('returns null for empty input', () => {
@@ -139,6 +141,52 @@ describe('slugify', () => {
 
   it('trims leading and trailing dashes', () => {
     expect(slugify('!! Foo !!')).toBe('foo')
+  })
+})
+
+describe('checkSectionIntegrity', () => {
+  const roadmap = (ids: string[]): ProductRoadmap => ({
+    sections: ids.map((id, i) => ({
+      id,
+      title: id,
+      description: '',
+      order: i + 1,
+    })),
+  })
+
+  it('returns empty report when roadmap and disk match exactly', () => {
+    const result = checkSectionIntegrity(roadmap(['a', 'b', 'c']), ['a', 'b', 'c'])
+    expect(result).toEqual({ missingOnDisk: [], orphanedOnDisk: [] })
+  })
+
+  it('flags roadmap IDs missing from disk', () => {
+    const result = checkSectionIntegrity(roadmap(['a', 'b', 'c']), ['a'])
+    expect(result.missingOnDisk.sort()).toEqual(['b', 'c'])
+    expect(result.orphanedOnDisk).toEqual([])
+  })
+
+  it('flags disk IDs not referenced by the roadmap', () => {
+    const result = checkSectionIntegrity(roadmap(['a']), ['a', 'legacy', 'orphan'])
+    expect(result.missingOnDisk).toEqual([])
+    expect(result.orphanedOnDisk.sort()).toEqual(['legacy', 'orphan'])
+  })
+
+  it('reports both sides when they partially overlap', () => {
+    const result = checkSectionIntegrity(roadmap(['a', 'b']), ['b', 'c'])
+    expect(result.missingOnDisk).toEqual(['a'])
+    expect(result.orphanedOnDisk).toEqual(['c'])
+  })
+
+  it('handles a null roadmap by treating every disk ID as orphaned', () => {
+    const result = checkSectionIntegrity(null, ['a', 'b'])
+    expect(result.missingOnDisk).toEqual([])
+    expect(result.orphanedOnDisk.sort()).toEqual(['a', 'b'])
+  })
+
+  it('handles an empty disk list by treating every roadmap ID as missing', () => {
+    const result = checkSectionIntegrity(roadmap(['a', 'b']), [])
+    expect(result.missingOnDisk.sort()).toEqual(['a', 'b'])
+    expect(result.orphanedOnDisk).toEqual([])
   })
 })
 
