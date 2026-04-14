@@ -35,7 +35,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [ ] Tests for `data-model-loader` (entity + relationship parsing)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
 - [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
-- [ ] GitHub Actions CI: build + typecheck + lint + test on push
+- [x] GitHub Actions CI: `.github/workflows/ci.yml` runs lint (`--max-warnings=0`) + typecheck + test + build on push to main and claude/** branches, plus PRs to main (iter 6)
 - [ ] Remove the `eslint-disable-next-line react-hooks/static-components` comments in `ScreenDesignPage` and `ShellDesignPage` by switching to eagerly-created module-level lazy components (possible only once the parameterized cache can be flattened — may not be feasible)
 - [ ] Add prop validation to dynamically loaded screen designs (Zod or simple shape check)
 - [ ] `DesignPage` — move 60-line Tailwind color map out of the component into a shared config
@@ -63,6 +63,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 3 | 4 | 24 | 0 | 0 | ✅ |
 | 4 | 4 | 33 | 0 | 0 | ✅ |
 | 5 | 5 | 43 | 0 | 0 | ✅ |
+| 6 | 5 | 43 | 0 | 0 | ✅ |
 
 ## Metadata
 
