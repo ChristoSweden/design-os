@@ -3,8 +3,14 @@ import { Check, AlertTriangle, FileText, FolderTree, ChevronDown, Download, Pack
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { AppLayout } from '@/components/AppLayout'
-import { loadProductData, hasExportZip, getExportZipUrl } from '@/lib/product-loader'
+import {
+  loadProductData,
+  hasExportZip,
+  getExportZipUrl,
+  checkSectionIntegrity,
+} from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
+import { SectionIntegrityWarning } from '@/components/SectionIntegrityWarning'
 
 export function ExportPage() {
   const productData = useMemo(() => loadProductData(), [])
@@ -19,6 +25,11 @@ export function ExportPage() {
     }).length
     return { sectionCount, sectionsWithScreenDesigns, allSectionIds }
   }, [productData.roadmap])
+
+  const integrityReport = useMemo(
+    () => checkSectionIntegrity(productData.roadmap, sectionStats.allSectionIds),
+    [productData.roadmap, sectionStats.allSectionIds]
+  )
 
   const hasOverview = !!productData.overview
   const hasRoadmap = !!productData.roadmap
@@ -47,6 +58,9 @@ export function ExportPage() {
               : 'Generate a complete handoff package for your development team.'}
           </p>
         </div>
+
+        {/* Roadmap <-> filesystem drift warning */}
+        <SectionIntegrityWarning report={integrityReport} />
 
         {/* Status - only show if zip not available */}
         {!exportZipAvailable && (
