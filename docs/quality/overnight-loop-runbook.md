@@ -30,7 +30,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] Extract `useResponsiveResize()` hook — dedupe `ShellDesignPage` and `ScreenDesignPage` drag logic (iter 2)
 - [x] Error boundary around lazy screen-design renders (iter 3) — own `LazyLoadErrorBoundary` with retry, applied to ScreenDesign + ShellPreview
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
-- [ ] Tests for `section-loader.parseSectionSpec` (important branching + regex)
+- [x] Tests for `section-loader.parseSpec` (title fallback, bullet parsing, shell:false case-insensitivity, true vs false, non-bullet rejection) (iter 5)
 - [ ] Tests for `shell-loader.parseShellSpec`
 - [ ] Tests for `data-model-loader` (entity + relationship parsing)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
@@ -62,6 +62,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 2 | 3 | 19 | 0 | 0 | ✅ |
 | 3 | 4 | 24 | 0 | 0 | ✅ |
 | 4 | 4 | 33 | 0 | 0 | ✅ |
+| 5 | 5 | 43 | 0 | 0 | ✅ |
 
 ## Metadata
 
