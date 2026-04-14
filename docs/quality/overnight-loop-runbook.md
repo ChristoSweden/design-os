@@ -27,7 +27,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] `React.lazy` caches moved out of render (iter 1)
 - [x] `setState in effect` fixed in `PhaseWarningBanner` (iter 1)
 - [x] Debug `console.log` removed from `shell-loader` (iter 1)
-- [ ] Extract `useResponsiveResize()` hook — dedupe `ShellDesignPage` and `ScreenDesignPage` drag logic
+- [x] Extract `useResponsiveResize()` hook — dedupe `ShellDesignPage` and `ScreenDesignPage` drag logic (iter 2)
 - [ ] Add `react-error-boundary` wrapper around lazy screen-design renders
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
 - [ ] Tests for `section-loader.parseSectionSpec` (important branching + regex)
@@ -59,6 +59,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 |---|---|---|---|---|---|
 | baseline | 0 | 0 | 9 | 0 | ✅ |
 | 1 | 2 | 13 | 0 | 0 | ✅ |
+| 2 | 3 | 19 | 0 | 0 | ✅ |
 
 ## Metadata
 

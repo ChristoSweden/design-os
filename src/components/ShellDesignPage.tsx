@@ -1,57 +1,17 @@
-import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PanelLeft, Maximize2, GripVertical, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getLazyShellPreview } from '@/lib/lazy-cache'
+import { useResponsiveResize } from '@/lib/hooks/useResponsiveResize'
 
 const MIN_WIDTH = 320
-const DEFAULT_WIDTH_PERCENT = 100
 
 export function ShellDesignPage() {
   const navigate = useNavigate()
-  const [widthPercent, setWidthPercent] = useState(DEFAULT_WIDTH_PERCENT)
-  const containerRef = useRef<HTMLDivElement>(null)
-  const isDragging = useRef(false)
-
-  // Handle resize drag
-  const handleMouseDown = useCallback(() => {
-    isDragging.current = true
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!isDragging.current || !containerRef.current) return
-
-      const containerRect = containerRef.current.getBoundingClientRect()
-      const containerWidth = containerRect.width
-      const containerCenter = containerRect.left + containerWidth / 2
-
-      // Calculate distance from center
-      const distanceFromCenter = Math.abs(e.clientX - containerCenter)
-      const maxDistance = containerWidth / 2
-
-      // Convert to percentage (distance from center * 2 = total width)
-      let newWidthPercent = (distanceFromCenter / maxDistance) * 100
-
-      // Clamp between min width and 100%
-      const minPercent = (MIN_WIDTH / containerWidth) * 100
-      newWidthPercent = Math.max(minPercent, Math.min(100, newWidthPercent))
-
-      setWidthPercent(newWidthPercent)
-    }
-
-    const handleMouseUp = () => {
-      isDragging.current = false
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-      document.body.style.cursor = ''
-      document.body.style.userSelect = ''
-    }
-
-    document.addEventListener('mousemove', handleMouseMove)
-    document.addEventListener('mouseup', handleMouseUp)
-    document.body.style.cursor = 'ew-resize'
-    document.body.style.userSelect = 'none'
-  }, [])
+  const { containerRef, widthPercent, setWidthPercent, handleMouseDown } =
+    useResponsiveResize({ minWidth: MIN_WIDTH })
 
   const previewWidth = `${widthPercent}%`
 
