@@ -51,27 +51,26 @@ export function areRequiredSectionStepsComplete(
 }
 
 /**
- * Two-step flow: 1. Design Tokens, 2. Shell Design.
+ * Generic two-step linear flow used by the Design and Product pages.
  *
  * Rules:
- *  - Step 1 is "completed" once the user has a design system
- *    (colors and/or typography), otherwise it is "current".
- *  - Step 2 is "completed" once the user has a shell spec,
- *    "current" once step 1 is done but step 2 is not, and
- *    "upcoming" otherwise.
+ *  - Step 1 is "completed" once `firstDone`, otherwise "current".
+ *  - Step 2 is "completed" once `secondDone`, "current" when step 1
+ *    is done but step 2 is not, and "upcoming" otherwise.
  */
-export function getDesignPageStepStatuses(
-  hasDesignSystem: boolean,
-  hasShell: boolean
+export function getTwoStepStatuses(
+  firstDone: boolean,
+  secondDone: boolean
 ): [StepStatus, StepStatus] {
-  const designTokens: StepStatus = hasDesignSystem ? 'completed' : 'current'
-  let shellDesign: StepStatus
-  if (hasShell) {
-    shellDesign = 'completed'
-  } else if (hasDesignSystem) {
-    shellDesign = 'current'
+  const first: StepStatus = firstDone ? 'completed' : 'current'
+  let second: StepStatus
+  if (secondDone) {
+    second = 'completed'
+  } else if (firstDone) {
+    second = 'current'
   } else {
-    shellDesign = 'upcoming'
+    second = 'upcoming'
   }
-  return [designTokens, shellDesign]
+  return [first, second]
 }
+

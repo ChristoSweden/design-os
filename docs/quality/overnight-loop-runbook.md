@@ -80,6 +80,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 16 | 12 | 107 | 0 | 0 | ✅ |
 | 17 | 13 | 112 | 0 | 0 | ✅ |
 | 18 | 13 | 120 | 0 | 0 | ✅ |
+| 19 | 13 | 120 | 0 | 0 | ✅ |
 
 ## Metadata
 

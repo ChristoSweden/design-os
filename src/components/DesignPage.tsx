@@ -7,7 +7,7 @@ import { StepIndicator } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
 import { loadProductData } from '@/lib/product-loader'
 import { getTailwindSwatch } from '@/lib/tailwind-colors'
-import { getDesignPageStepStatuses } from '@/lib/step-statuses'
+import { getTwoStepStatuses } from '@/lib/step-statuses'
 import { ChevronRight, Layout } from 'lucide-react'
 
 export function DesignPage() {
@@ -19,7 +19,7 @@ export function DesignPage() {
   const hasShell = !!shell?.spec
   const allStepsComplete = hasDesignSystem && hasShell
 
-  const stepStatuses = getDesignPageStepStatuses(hasDesignSystem, hasShell)
+  const stepStatuses = getTwoStepStatuses(hasDesignSystem, hasShell)
 
   return (
     <AppLayout>
