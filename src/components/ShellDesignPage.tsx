@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { getLazyShellPreview } from '@/lib/lazy-cache'
 import { useResponsiveResize } from '@/lib/hooks/useResponsiveResize'
+import { LazyLoadErrorBoundary } from '@/components/LazyLoadErrorBoundary'
 
 const MIN_WIDTH = 320
 
@@ -183,21 +184,23 @@ export function ShellDesignFullscreen() {
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="h-screen flex items-center justify-center bg-background">
-          <div className="text-stone-500 dark:text-stone-400">Loading...</div>
-        </div>
-      }
-    >
-      {/*
-        ShellPreviewComponent comes from a module-level cache in
-        @/lib/lazy-cache, so the LazyExoticComponent identity is stable
-        across renders. The concern behind react-hooks/static-components
-        does not apply here.
-      */}
-      {/* eslint-disable-next-line react-hooks/static-components */}
-      <ShellPreviewComponent />
-    </Suspense>
+    <LazyLoadErrorBoundary label="shell preview">
+      <Suspense
+        fallback={
+          <div className="h-screen flex items-center justify-center bg-background">
+            <div className="text-stone-500 dark:text-stone-400">Loading...</div>
+          </div>
+        }
+      >
+        {/*
+          ShellPreviewComponent comes from a module-level cache in
+          @/lib/lazy-cache, so the LazyExoticComponent identity is stable
+          across renders. The concern behind react-hooks/static-components
+          does not apply here.
+        */}
+        {/* eslint-disable-next-line react-hooks/static-components */}
+        <ShellPreviewComponent />
+      </Suspense>
+    </LazyLoadErrorBoundary>
   )
 }

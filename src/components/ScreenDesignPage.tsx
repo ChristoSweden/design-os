@@ -6,6 +6,7 @@ import { ThemeToggle } from '@/components/ThemeToggle'
 import { getLazyScreenDesign, getLazyAppShell } from '@/lib/lazy-cache'
 import { loadProductData } from '@/lib/product-loader'
 import { useResponsiveResize } from '@/lib/hooks/useResponsiveResize'
+import { LazyLoadErrorBoundary } from '@/components/LazyLoadErrorBoundary'
 
 const MIN_WIDTH = 320
 
@@ -213,9 +214,32 @@ export function ScreenDesignFullscreen() {
   // rule's static analysis can't see through the cache, hence the local
   // suppressions.
 
+  const screenDesignLabel = `screen design "${screenDesignName ?? ''}"`
+
   // If shell exists, wrap screen design in AppShell
   if (AppShellComponent) {
     return (
+      <LazyLoadErrorBoundary label={screenDesignLabel}>
+        <Suspense
+          fallback={
+            <div className="h-screen flex items-center justify-center bg-background">
+              <div className="text-stone-500 dark:text-stone-400">Loading...</div>
+            </div>
+          }
+        >
+          {/* eslint-disable-next-line react-hooks/static-components */}
+          <AppShellComponent>
+            {/* eslint-disable-next-line react-hooks/static-components */}
+            <ScreenDesignComponent />
+          </AppShellComponent>
+        </Suspense>
+      </LazyLoadErrorBoundary>
+    )
+  }
+
+  // No shell, render screen design directly
+  return (
+    <LazyLoadErrorBoundary label={screenDesignLabel}>
       <Suspense
         fallback={
           <div className="h-screen flex items-center justify-center bg-background">
@@ -224,25 +248,8 @@ export function ScreenDesignFullscreen() {
         }
       >
         {/* eslint-disable-next-line react-hooks/static-components */}
-        <AppShellComponent>
-          {/* eslint-disable-next-line react-hooks/static-components */}
-          <ScreenDesignComponent />
-        </AppShellComponent>
+        <ScreenDesignComponent />
       </Suspense>
-    )
-  }
-
-  // No shell, render screen design directly
-  return (
-    <Suspense
-      fallback={
-        <div className="h-screen flex items-center justify-center bg-background">
-          <div className="text-stone-500 dark:text-stone-400">Loading...</div>
-        </div>
-      }
-    >
-      {/* eslint-disable-next-line react-hooks/static-components */}
-      <ScreenDesignComponent />
-    </Suspense>
+    </LazyLoadErrorBoundary>
   )
 }

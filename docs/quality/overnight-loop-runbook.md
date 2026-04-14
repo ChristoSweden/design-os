@@ -28,7 +28,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] `setState in effect` fixed in `PhaseWarningBanner` (iter 1)
 - [x] Debug `console.log` removed from `shell-loader` (iter 1)
 - [x] Extract `useResponsiveResize()` hook — dedupe `ShellDesignPage` and `ScreenDesignPage` drag logic (iter 2)
-- [ ] Add `react-error-boundary` wrapper around lazy screen-design renders
+- [x] Error boundary around lazy screen-design renders (iter 3) — own `LazyLoadErrorBoundary` with retry, applied to ScreenDesign + ShellPreview
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
 - [ ] Tests for `section-loader.parseSectionSpec` (important branching + regex)
 - [ ] Tests for `shell-loader.parseShellSpec`
@@ -60,6 +60,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | baseline | 0 | 0 | 9 | 0 | ✅ |
 | 1 | 2 | 13 | 0 | 0 | ✅ |
 | 2 | 3 | 19 | 0 | 0 | ✅ |
+| 3 | 4 | 24 | 0 | 0 | ✅ |
 
 ## Metadata
 
