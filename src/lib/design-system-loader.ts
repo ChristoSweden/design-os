@@ -10,55 +10,72 @@ const designSystemFiles = import.meta.glob('/product/design-system/*.json', {
 }) as Record<string, { default: Record<string, string> }>
 
 /**
- * Load color tokens from colors.json
+ * Pure validator: accepts an arbitrary object and returns a well-formed
+ * ColorTokens value if `primary`, `secondary`, and `neutral` are all
+ * non-empty strings, otherwise null. Exported for unit tests and any
+ * non-file caller.
  *
  * Expected format:
- * {
- *   "primary": "lime",
- *   "secondary": "teal",
- *   "neutral": "stone"
- * }
+ *   { "primary": "lime", "secondary": "teal", "neutral": "stone" }
+ */
+export function parseColorTokens(raw: unknown): ColorTokens | null {
+  if (!raw || typeof raw !== 'object') return null
+  const obj = raw as Record<string, unknown>
+  const { primary, secondary, neutral } = obj
+  if (
+    typeof primary !== 'string' ||
+    typeof secondary !== 'string' ||
+    typeof neutral !== 'string' ||
+    !primary ||
+    !secondary ||
+    !neutral
+  ) {
+    return null
+  }
+  return { primary, secondary, neutral }
+}
+
+/**
+ * Load color tokens from colors.json
  */
 export function loadColorTokens(): ColorTokens | null {
   const colorsModule = designSystemFiles['/product/design-system/colors.json']
-  if (!colorsModule?.default) return null
+  return parseColorTokens(colorsModule?.default)
+}
 
-  const colors = colorsModule.default
-  if (!colors.primary || !colors.secondary || !colors.neutral) {
+/**
+ * Pure validator for typography tokens. Requires `heading` and `body`;
+ * `mono` defaults to "IBM Plex Mono" if missing.
+ *
+ * Expected format:
+ *   { "heading": "DM Sans", "body": "DM Sans", "mono": "IBM Plex Mono" }
+ */
+export function parseTypographyTokens(raw: unknown): TypographyTokens | null {
+  if (!raw || typeof raw !== 'object') return null
+  const obj = raw as Record<string, unknown>
+  const { heading, body, mono } = obj
+  if (
+    typeof heading !== 'string' ||
+    typeof body !== 'string' ||
+    !heading ||
+    !body
+  ) {
     return null
   }
-
   return {
-    primary: colors.primary,
-    secondary: colors.secondary,
-    neutral: colors.neutral,
+    heading,
+    body,
+    mono: typeof mono === 'string' && mono ? mono : 'IBM Plex Mono',
   }
 }
 
 /**
  * Load typography tokens from typography.json
- *
- * Expected format:
- * {
- *   "heading": "DM Sans",
- *   "body": "DM Sans",
- *   "mono": "IBM Plex Mono"
- * }
  */
 export function loadTypographyTokens(): TypographyTokens | null {
-  const typographyModule = designSystemFiles['/product/design-system/typography.json']
-  if (!typographyModule?.default) return null
-
-  const typography = typographyModule.default
-  if (!typography.heading || !typography.body) {
-    return null
-  }
-
-  return {
-    heading: typography.heading,
-    body: typography.body,
-    mono: typography.mono || 'IBM Plex Mono',
-  }
+  const typographyModule =
+    designSystemFiles['/product/design-system/typography.json']
+  return parseTypographyTokens(typographyModule?.default)
 }
 
 /**

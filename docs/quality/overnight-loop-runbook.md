@@ -32,6 +32,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
 - [x] Tests for `section-loader.parseSpec` (title fallback, bullet parsing, shell:false case-insensitivity, true vs false, non-bullet rejection) (iter 5)
 - [x] Tests for `shell-loader.parseShellSpec` (iter 8)
+- [x] `design-system-loader`: extracted pure `parseColorTokens` / `parseTypographyTokens` validators + 12 unit tests (iter 9)
 - [x] Tests for `data-model-loader` (entity + relationship parsing) (iter 7)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
 - [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
@@ -66,6 +67,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 6 | 5 | 43 | 0 | 0 | ✅ |
 | 7 | 6 | 50 | 0 | 0 | ✅ |
 | 8 | 7 | 57 | 0 | 0 | ✅ |
+| 9 | 8 | 69 | 0 | 0 | ✅ |
 
 ## Metadata
 
