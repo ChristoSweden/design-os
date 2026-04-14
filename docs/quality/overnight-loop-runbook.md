@@ -32,7 +32,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
 - [x] Tests for `section-loader.parseSpec` (title fallback, bullet parsing, shell:false case-insensitivity, true vs false, non-bullet rejection) (iter 5)
 - [ ] Tests for `shell-loader.parseShellSpec`
-- [ ] Tests for `data-model-loader` (entity + relationship parsing)
+- [x] Tests for `data-model-loader` (entity + relationship parsing) (iter 7)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
 - [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
 - [x] GitHub Actions CI: `.github/workflows/ci.yml` runs lint (`--max-warnings=0`) + typecheck + test + build on push to main and claude/** branches, plus PRs to main (iter 6)
@@ -64,6 +64,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 4 | 4 | 33 | 0 | 0 | ✅ |
 | 5 | 5 | 43 | 0 | 0 | ✅ |
 | 6 | 5 | 43 | 0 | 0 | ✅ |
+| 7 | 6 | 50 | 0 | 0 | ✅ |
 
 ## Metadata
 
