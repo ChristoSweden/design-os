@@ -31,7 +31,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] Error boundary around lazy screen-design renders (iter 3) — own `LazyLoadErrorBoundary` with retry, applied to ScreenDesign + ShellPreview
 - [ ] Add JSON schema validation for `data.json` (introduce Zod)
 - [x] Tests for `section-loader.parseSpec` (title fallback, bullet parsing, shell:false case-insensitivity, true vs false, non-bullet rejection) (iter 5)
-- [ ] Tests for `shell-loader.parseShellSpec`
+- [x] Tests for `shell-loader.parseShellSpec` (iter 8)
 - [x] Tests for `data-model-loader` (entity + relationship parsing) (iter 7)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
 - [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
@@ -65,6 +65,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 5 | 5 | 43 | 0 | 0 | ✅ |
 | 6 | 5 | 43 | 0 | 0 | ✅ |
 | 7 | 6 | 50 | 0 | 0 | ✅ |
+| 8 | 7 | 57 | 0 | 0 | ✅ |
 
 ## Metadata
 
