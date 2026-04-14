@@ -3,40 +3,12 @@ import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
-import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
+import { StepIndicator } from '@/components/StepIndicator'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
 import { loadProductData } from '@/lib/product-loader'
 import { getTailwindSwatch } from '@/lib/tailwind-colors'
+import { getDesignPageStepStatuses } from '@/lib/step-statuses'
 import { ChevronRight, Layout } from 'lucide-react'
-
-/**
- * Determine the status of each step on the Design page
- * Steps: 1. Design Tokens, 2. Shell Design
- */
-function getDesignPageStepStatuses(
-  hasDesignSystem: boolean,
-  hasShell: boolean
-): StepStatus[] {
-  const statuses: StepStatus[] = []
-
-  // Step 1: Design Tokens
-  if (hasDesignSystem) {
-    statuses.push('completed')
-  } else {
-    statuses.push('current')
-  }
-
-  // Step 2: Shell
-  if (hasShell) {
-    statuses.push('completed')
-  } else if (hasDesignSystem) {
-    statuses.push('current')
-  } else {
-    statuses.push('upcoming')
-  }
-
-  return statuses
-}
 
 export function DesignPage() {
   const productData = useMemo(() => loadProductData(), [])
