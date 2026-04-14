@@ -5,8 +5,15 @@ import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
 import { PhaseWarningBanner } from '@/components/PhaseWarningBanner'
 import { NextPhaseButton } from '@/components/NextPhaseButton'
-import { loadProductData } from '@/lib/product-loader'
-import { getSectionScreenDesigns, getSectionScreenshots, hasSectionSpec, hasSectionData } from '@/lib/section-loader'
+import { loadProductData, checkSectionIntegrity } from '@/lib/product-loader'
+import {
+  getAllSectionIds,
+  getSectionScreenDesigns,
+  getSectionScreenshots,
+  hasSectionSpec,
+  hasSectionData,
+} from '@/lib/section-loader'
+import { SectionIntegrityWarning } from '@/components/SectionIntegrityWarning'
 import { ChevronRight, Check, Circle } from 'lucide-react'
 
 interface SectionProgress {
@@ -38,6 +45,12 @@ export function SectionsPage() {
   const sections = useMemo(
     () => productData.roadmap?.sections || [],
     [productData.roadmap?.sections]
+  )
+
+  // Integrity check: warn if the roadmap and the on-disk sections drift.
+  const integrityReport = useMemo(
+    () => checkSectionIntegrity(productData.roadmap, getAllSectionIds()),
+    [productData.roadmap]
   )
 
   // Calculate progress for each section
@@ -75,6 +88,9 @@ export function SectionsPage() {
 
         {/* Warning banner for incomplete prerequisite phases */}
         <PhaseWarningBanner />
+
+        {/* Roadmap <-> filesystem drift warning */}
+        <SectionIntegrityWarning report={integrityReport} />
 
         {/* Sections list */}
         {sections.length === 0 ? (

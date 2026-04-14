@@ -35,7 +35,8 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] `design-system-loader`: extracted pure `parseColorTokens` / `parseTypographyTokens` validators + 12 unit tests (iter 9)
 - [x] Tests for `data-model-loader` (entity + relationship parsing) (iter 7)
 - [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
-- [x] Roadmap ↔ filesystem section-ID integrity check: new `checkSectionIntegrity()` helper + 6 tests (iter 10). Next step: wire it into SectionsPage as a visible warning.
+- [x] Roadmap ↔ filesystem section-ID integrity check: new `checkSectionIntegrity()` helper + 6 tests (iter 10).
+- [x] Visible warning on SectionsPage: new `SectionIntegrityWarning` component wired into SectionsPage with 4 component tests (iter 11).
 - [x] GitHub Actions CI: `.github/workflows/ci.yml` runs lint (`--max-warnings=0`) + typecheck + test + build on push to main and claude/** branches, plus PRs to main (iter 6)
 - [ ] Remove the `eslint-disable-next-line react-hooks/static-components` comments in `ScreenDesignPage` and `ShellDesignPage` by switching to eagerly-created module-level lazy components (possible only once the parameterized cache can be flattened — may not be feasible)
 - [ ] Add prop validation to dynamically loaded screen designs (Zod or simple shape check)
@@ -69,6 +70,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 8 | 7 | 57 | 0 | 0 | ✅ |
 | 9 | 8 | 69 | 0 | 0 | ✅ |
 | 10 | 8 | 75 | 0 | 0 | ✅ |
+| 11 | 9 | 79 | 0 | 0 | ✅ |
 
 ## Metadata
 
