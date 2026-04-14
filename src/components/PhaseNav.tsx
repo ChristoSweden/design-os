@@ -3,8 +3,15 @@ import { useMemo } from 'react'
 import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
 import { loadProductData, hasExportZip } from '@/lib/product-loader'
 import { getAllSectionIds, getSectionScreenDesigns } from '@/lib/section-loader'
+import {
+  type Phase,
+  type PhaseStatusInfo,
+  type PhaseCompleteness,
+  phaseFromPathname,
+  buildPhaseStatuses,
+} from '@/lib/phase-nav'
 
-export type Phase = 'product' | 'data-model' | 'design' | 'sections' | 'export'
+export type { Phase } from '@/lib/phase-nav'
 
 interface PhaseConfig {
   id: Phase
@@ -13,79 +20,40 @@ interface PhaseConfig {
   path: string
 }
 
-const phases: PhaseConfig[] = [
-  { id: 'product', label: 'Product', icon: FileText, path: '/' },
-  { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
-  { id: 'design', label: 'Design', icon: Layout, path: '/design' },
-  { id: 'sections', label: 'Sections', icon: LayoutList, path: '/sections' },
-  { id: 'export', label: 'Export', icon: Package, path: '/export' },
-]
-
-export type PhaseStatus = 'completed' | 'current' | 'upcoming'
-
-interface PhaseInfo {
-  phase: PhaseConfig
-  status: PhaseStatus
-  isComplete: boolean
+const PHASE_CONFIG: Record<Phase, PhaseConfig> = {
+  product: { id: 'product', label: 'Product', icon: FileText, path: '/' },
+  'data-model': { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
+  design: { id: 'design', label: 'Design', icon: Layout, path: '/design' },
+  sections: { id: 'sections', label: 'Sections', icon: LayoutList, path: '/sections' },
+  export: { id: 'export', label: 'Export', icon: Package, path: '/export' },
 }
 
-function usePhaseStatuses(): PhaseInfo[] {
+interface PhaseNavItem extends PhaseStatusInfo {
+  config: PhaseConfig
+}
+
+function usePhaseStatuses(): PhaseNavItem[] {
   const location = useLocation()
   const productData = useMemo(() => loadProductData(), [])
-
-  // Calculate completion status for each phase
-  const hasOverview = !!productData.overview
-  const hasRoadmap = !!productData.roadmap
-  const hasDataModel = !!productData.dataModel
-  const hasDesignSystem = !!productData.designSystem
-  const hasShell = !!productData.shell
 
   const sectionIds = useMemo(() => getAllSectionIds(), [])
   const sectionsWithScreenDesigns = useMemo(() => {
     return sectionIds.filter(id => getSectionScreenDesigns(id).length > 0).length
   }, [sectionIds])
-  const hasSections = sectionsWithScreenDesigns > 0
 
-  // Determine current phase from URL
-  const currentPath = location.pathname
-  let currentPhaseId: Phase = 'product'
-
-  if (currentPath === '/' || currentPath === '/product') {
-    currentPhaseId = 'product'
-  } else if (currentPath === '/data-model') {
-    currentPhaseId = 'data-model'
-  } else if (currentPath === '/design' || currentPath === '/design-system' || currentPath.startsWith('/shell')) {
-    currentPhaseId = 'design'
-  } else if (currentPath === '/sections' || currentPath.startsWith('/sections/')) {
-    currentPhaseId = 'sections'
-  } else if (currentPath === '/export') {
-    currentPhaseId = 'export'
+  const completeness: PhaseCompleteness = {
+    product: !!productData.overview && !!productData.roadmap,
+    'data-model': !!productData.dataModel,
+    design: !!productData.designSystem || !!productData.shell,
+    sections: sectionsWithScreenDesigns > 0,
+    export: hasExportZip(),
   }
 
-  // Check if export zip exists
-  const exportZipExists = hasExportZip()
-
-  // Determine completion status
-  const phaseComplete: Record<Phase, boolean> = {
-    'product': hasOverview && hasRoadmap,
-    'data-model': hasDataModel,
-    'design': hasDesignSystem || hasShell,
-    'sections': hasSections,
-    'export': exportZipExists,
-  }
-
-  return phases.map(phase => {
-    const isComplete = phaseComplete[phase.id]
-    let status: PhaseStatus
-    if (phase.id === currentPhaseId) {
-      status = 'current'
-    } else if (isComplete) {
-      status = 'completed'
-    } else {
-      status = 'upcoming'
-    }
-    return { phase, status, isComplete }
-  })
+  const currentPhase = phaseFromPathname(location.pathname)
+  return buildPhaseStatuses(currentPhase, completeness).map((info) => ({
+    ...info,
+    config: PHASE_CONFIG[info.id],
+  }))
 }
 
 export function PhaseNav() {
@@ -94,12 +62,12 @@ export function PhaseNav() {
 
   return (
     <nav className="flex items-center justify-center">
-      {phaseInfos.map(({ phase, status, isComplete }, index) => {
-        const Icon = phase.icon
+      {phaseInfos.map(({ config, status, isComplete }, index) => {
+        const Icon = config.icon
         const isFirst = index === 0
 
         return (
-          <div key={phase.id} className="flex items-center">
+          <div key={config.id} className="flex items-center">
             {/* Connector line */}
             {!isFirst && (
               <div
@@ -113,7 +81,7 @@ export function PhaseNav() {
 
             {/* Phase button */}
             <button
-              onClick={() => navigate(phase.path)}
+              onClick={() => navigate(config.path)}
               className={`
                 group relative flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg transition-all duration-200 whitespace-nowrap
                 ${status === 'current'
@@ -133,7 +101,7 @@ export function PhaseNav() {
               <span className={`text-sm font-medium hidden sm:inline ${
                 status === 'upcoming' ? 'opacity-60' : ''
               }`}>
-                {phase.label}
+                {config.label}
               </span>
 
               {/* Completion indicator - check circle at top-left (shows even when current) */}
