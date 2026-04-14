@@ -2,27 +2,11 @@ import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, X } from 'lucide-react'
 import { loadProductData } from '@/lib/product-loader'
-
-/**
- * Get a storage key based on the product name to track dismissed warnings per product
- * Converts " & " to "-and-" to maintain semantic meaning
- */
-function getStorageKey(productName: string): string {
-  const sanitized = productName
-    .toLowerCase()
-    .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
-    .replace(/[^a-z0-9]+/g, '-')
-  return `design-os-phase-warning-dismissed-${sanitized}`
-}
-
-function readDismissed(storageKey: string): boolean {
-  if (typeof window === 'undefined') return true
-  try {
-    return window.localStorage.getItem(storageKey) === 'true'
-  } catch {
-    return true
-  }
-}
+import {
+  getPhaseWarningStorageKey,
+  readPhaseWarningDismissed,
+  writePhaseWarningDismissed,
+} from '@/lib/phase-warning-storage'
 
 export function PhaseWarningBanner() {
   const productData = useMemo(() => loadProductData(), [])
@@ -32,17 +16,16 @@ export function PhaseWarningBanner() {
   const hasShell = !!productData.shell?.spec
   const hasDesign = hasDesignSystem || hasShell
 
-  const productName = productData.overview?.name || 'default-product'
-  const storageKey = getStorageKey(productName)
+  const storageKey = getPhaseWarningStorageKey(productData.overview?.name)
 
   // Lazy initial state avoids a synchronous setState inside an effect
   // (react-hooks/set-state-in-effect).
   const [isDismissed, setIsDismissed] = useState<boolean>(() =>
-    readDismissed(storageKey)
+    readPhaseWarningDismissed(storageKey)
   )
 
   const handleDismiss = () => {
-    localStorage.setItem(storageKey, 'true')
+    writePhaseWarningDismissed(storageKey)
     setIsDismissed(true)
   }
 
