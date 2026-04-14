@@ -35,7 +35,10 @@ export function SectionsPage() {
   const navigate = useNavigate()
   const productData = useMemo(() => loadProductData(), [])
 
-  const sections = productData.roadmap?.sections || []
+  const sections = useMemo(
+    () => productData.roadmap?.sections || [],
+    [productData.roadmap?.sections]
+  )
 
   // Calculate progress for each section
   const sectionProgressMap = useMemo(() => {

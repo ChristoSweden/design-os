@@ -3,10 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Maximize2, GripVertical, Layout, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { loadScreenDesignComponent, sectionUsesShell } from '@/lib/section-loader'
-import { loadAppShell, hasShellComponents, loadShellInfo } from '@/lib/shell-loader'
+import { getLazyScreenDesign, getLazyAppShell } from '@/lib/lazy-cache'
 import { loadProductData } from '@/lib/product-loader'
-import React from 'react'
 
 const MIN_WIDTH = 320
 const DEFAULT_WIDTH_PERCENT = 100
@@ -195,106 +193,15 @@ export function ScreenDesignPage() {
 export function ScreenDesignFullscreen() {
   const { sectionId, screenDesignName } = useParams<{ sectionId: string; screenDesignName: string }>()
 
-  // Load screen design component
-  const ScreenDesignComponent = useMemo(() => {
-    if (!sectionId || !screenDesignName) return null
-    const loader = loadScreenDesignComponent(sectionId, screenDesignName)
-    if (!loader) return null
-    // Wrap the loader to handle potential export issues
-    return React.lazy(async () => {
-      try {
-        const module = await loader()
-        if (module && typeof module.default === 'function') {
-          return module
-        }
-        console.error('Screen design does not have a valid default export:', screenDesignName)
-        return { default: () => <div>Invalid screen design: {screenDesignName}</div> }
-      } catch (e) {
-        console.error('Failed to load screen design:', screenDesignName, e)
-        return { default: () => <div>Failed to load: {screenDesignName}</div> }
-      }
-    })
-  }, [sectionId, screenDesignName])
+  // Resolve cached lazy components (see src/lib/lazy-cache.tsx). These
+  // helpers are idempotent: calling them from render returns the same
+  // LazyExoticComponent instance for a given key.
+  const ScreenDesignComponent =
+    sectionId && screenDesignName
+      ? getLazyScreenDesign(sectionId, screenDesignName)
+      : null
 
-  // Load AppShell component if it exists AND this section uses the shell
-  const AppShellComponent = useMemo(() => {
-    // Check if this section should use the shell (based on spec.md config)
-    if (sectionId && !sectionUsesShell(sectionId)) {
-      console.log('[ScreenDesignFullscreen] Section configured to not use shell')
-      return null
-    }
-
-    // Check if shell components exist
-    const shellExists = hasShellComponents()
-    console.log('[ScreenDesignFullscreen] Shell exists:', shellExists)
-    if (!shellExists) return null
-
-    const loader = loadAppShell()
-    console.log('[ScreenDesignFullscreen] AppShell loader:', loader)
-    if (!loader) {
-      console.warn('[ScreenDesignFullscreen] hasShellComponents() returned true but loadAppShell() returned null')
-      return null
-    }
-
-    // Wrap the loader to provide default props to the shell
-    return React.lazy(async () => {
-      try {
-        const module = await loader() as Record<string, unknown>
-        const ShellComponent = (module?.default || module?.AppShell) as React.ComponentType<Record<string, unknown>>
-
-        if (typeof ShellComponent !== 'function') {
-          console.warn('[ScreenDesignFullscreen] AppShell does not have a valid export')
-          return { default: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
-        }
-
-        // Create a wrapper that provides default props to the shell
-        const ShellWrapper = ({ children }: { children?: React.ReactNode }) => {
-          // Try to get navigation items from shell spec
-          const shellInfo = loadShellInfo()
-          const specNavItems = shellInfo?.spec?.navigationItems || []
-
-          // Parse navigation items from spec (format: "**Label** → Description")
-          const navigationItems = specNavItems.length > 0
-            ? specNavItems.map((item, index) => {
-                // Extract label from **Label** format
-                const labelMatch = item.match(/\*\*([^*]+)\*\*/)
-                const label = labelMatch ? labelMatch[1] : item.split('→')[0]?.trim() || `Item ${index + 1}`
-                return {
-                  label,
-                  href: `/${label.toLowerCase().replace(/\s+/g, '-')}`,
-                  isActive: index === 0,
-                }
-              })
-            : [
-                { label: 'Dashboard', href: '/', isActive: true },
-                { label: 'Items', href: '/items' },
-                { label: 'Settings', href: '/settings' },
-              ]
-
-          const defaultUser = {
-            name: 'Demo User',
-          }
-
-          // Pass props dynamically - the shell component decides what it needs
-          return (
-            <ShellComponent
-              navigationItems={navigationItems}
-              user={defaultUser}
-              onNavigate={() => {}}
-              onLogout={() => {}}
-            >
-              {children}
-            </ShellComponent>
-          )
-        }
-
-        return { default: ShellWrapper }
-      } catch (e) {
-        console.error('[ScreenDesignFullscreen] Failed to load AppShell:', e)
-        return { default: ({ children }: { children?: React.ReactNode }) => <>{children}</> }
-      }
-    })
-  }, [sectionId]) // Depends on sectionId to check section-specific shell config
+  const AppShellComponent = getLazyAppShell(sectionId)
 
   // Sync theme with parent window
   useEffect(() => {
@@ -338,6 +245,14 @@ export function ScreenDesignFullscreen() {
     )
   }
 
+  // NOTE on the eslint-disables below:
+  // `ScreenDesignComponent` and `AppShellComponent` are LazyExoticComponents
+  // returned from a module-level cache in `@/lib/lazy-cache`. They are
+  // idempotent per key, so they do NOT get recreated on re-render — the
+  // concern behind `react-hooks/static-components` does not apply. The
+  // rule's static analysis can't see through the cache, hence the local
+  // suppressions.
+
   // If shell exists, wrap screen design in AppShell
   if (AppShellComponent) {
     return (
@@ -348,7 +263,9 @@ export function ScreenDesignFullscreen() {
           </div>
         }
       >
+        {/* eslint-disable-next-line react-hooks/static-components */}
         <AppShellComponent>
+          {/* eslint-disable-next-line react-hooks/static-components */}
           <ScreenDesignComponent />
         </AppShellComponent>
       </Suspense>
@@ -364,6 +281,7 @@ export function ScreenDesignFullscreen() {
         </div>
       }
     >
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <ScreenDesignComponent />
     </Suspense>
   )

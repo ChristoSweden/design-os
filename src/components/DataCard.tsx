@@ -22,7 +22,8 @@ function extractMeta(data: Record<string, unknown>): DataMeta | null {
 }
 
 function getDataWithoutMeta(data: Record<string, unknown>): Record<string, unknown> {
-  const { _meta, ...rest } = data
+  const rest = { ...data }
+  delete rest._meta
   return rest
 }
 

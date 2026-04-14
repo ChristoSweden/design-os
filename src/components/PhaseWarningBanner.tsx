@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, X } from 'lucide-react'
 import { loadProductData } from '@/lib/product-loader'
@@ -15,9 +15,17 @@ function getStorageKey(productName: string): string {
   return `design-os-phase-warning-dismissed-${sanitized}`
 }
 
+function readDismissed(storageKey: string): boolean {
+  if (typeof window === 'undefined') return true
+  try {
+    return window.localStorage.getItem(storageKey) === 'true'
+  } catch {
+    return true
+  }
+}
+
 export function PhaseWarningBanner() {
   const productData = useMemo(() => loadProductData(), [])
-  const [isDismissed, setIsDismissed] = useState(true) // Start dismissed to avoid flash
 
   const hasDataModel = !!productData.dataModel
   const hasDesignSystem = !!(productData.designSystem?.colors || productData.designSystem?.typography)
@@ -27,11 +35,11 @@ export function PhaseWarningBanner() {
   const productName = productData.overview?.name || 'default-product'
   const storageKey = getStorageKey(productName)
 
-  // Check localStorage on mount
-  useEffect(() => {
-    const dismissed = localStorage.getItem(storageKey) === 'true'
-    setIsDismissed(dismissed)
-  }, [storageKey])
+  // Lazy initial state avoids a synchronous setState inside an effect
+  // (react-hooks/set-state-in-effect).
+  const [isDismissed, setIsDismissed] = useState<boolean>(() =>
+    readDismissed(storageKey)
+  )
 
   const handleDismiss = () => {
     localStorage.setItem(storageKey, 'true')

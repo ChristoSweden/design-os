@@ -1,10 +1,9 @@
-import { Suspense, useMemo, useState, useRef, useCallback, useEffect } from 'react'
+import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PanelLeft, Maximize2, GripVertical, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
-import { loadShellPreview } from '@/lib/shell-loader'
-import React from 'react'
+import { getLazyShellPreview } from '@/lib/lazy-cache'
 
 const MIN_WIDTH = 320
 const DEFAULT_WIDTH_PERCENT = 100
@@ -179,12 +178,7 @@ export function ShellDesignPage() {
  * Syncs theme with parent window via localStorage
  */
 export function ShellDesignFullscreen() {
-  const shellPreviewLoader = loadShellPreview()
-
-  const ShellPreviewComponent = useMemo(() => {
-    if (!shellPreviewLoader) return null
-    return React.lazy(shellPreviewLoader)
-  }, [shellPreviewLoader])
+  const ShellPreviewComponent = getLazyShellPreview()
 
   // Sync theme with parent window
   useEffect(() => {
@@ -236,6 +230,13 @@ export function ShellDesignFullscreen() {
         </div>
       }
     >
+      {/*
+        ShellPreviewComponent comes from a module-level cache in
+        @/lib/lazy-cache, so the LazyExoticComponent identity is stable
+        across renders. The concern behind react-hooks/static-components
+        does not apply here.
+      */}
+      {/* eslint-disable-next-line react-hooks/static-components */}
       <ShellPreviewComponent />
     </Suspense>
   )

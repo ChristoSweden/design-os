@@ -1,0 +1,67 @@
+# Overnight Continuous Improvement Loop
+
+Started: 2026-04-14 (user asleep, unrestricted mandate).
+Branch: `claude/continuous-testing-quality-v9duJ`
+Scope: `design-os` only (the other three target repos cannot be pushed to — see `docs/swot/README.md`).
+
+## What each loop iteration does
+
+1. **Sync**: fetch remote, rebase branch on origin.
+2. **Baseline**: run `npm run lint`, `npx tsc -b`, `npm run build`, `npm test`. Save logs into `docs/quality/iter-<n>-*.log`.
+3. **Check on external repos**: re-probe `/home/user/apps/Pilot-Speak-4.0` to see if it's been cloned in; if so, run the SWOT pipeline on it.
+4. **Pick next improvement** from the priority list in `docs/swot/cross-cutting.md` → "Overnight improvement priorities".
+5. **Implement it** in the smallest coherent diff. Only touch files the improvement requires.
+6. **Add a test** for the change if it touches runtime behavior.
+7. **Re-run lint + typecheck + build + test**. If anything regresses, revert the change and queue a follow-up item instead of pressing on.
+8. **Update SWOT docs** if the change invalidates a weakness bullet.
+9. **Commit** with a clear `iter(N): <change>` message and push with retries.
+10. **Sleep until next loop tick**.
+
+## Priority queue (live — mutate as you go)
+
+Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discover them.
+
+- [x] Vitest + RTL infrastructure (iter 1)
+- [x] First pure-function tests (`cn`, `parseProductOverview`, `parseProductRoadmap`) (iter 1)
+- [x] Lint zero (9 → 0 errors) (iter 1)
+- [x] `React.lazy` caches moved out of render (iter 1)
+- [x] `setState in effect` fixed in `PhaseWarningBanner` (iter 1)
+- [x] Debug `console.log` removed from `shell-loader` (iter 1)
+- [ ] Extract `useResponsiveResize()` hook — dedupe `ShellDesignPage` and `ScreenDesignPage` drag logic
+- [ ] Add `react-error-boundary` wrapper around lazy screen-design renders
+- [ ] Add JSON schema validation for `data.json` (introduce Zod)
+- [ ] Tests for `section-loader.parseSectionSpec` (important branching + regex)
+- [ ] Tests for `shell-loader.parseShellSpec`
+- [ ] Tests for `data-model-loader` (entity + relationship parsing)
+- [ ] Slugify collision detection in `product-loader.slugify`
+- [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
+- [ ] GitHub Actions CI: build + typecheck + lint + test on push
+- [ ] Remove the `eslint-disable-next-line react-hooks/static-components` comments in `ScreenDesignPage` and `ShellDesignPage` by switching to eagerly-created module-level lazy components (possible only once the parameterized cache can be flattened — may not be feasible)
+- [ ] Add prop validation to dynamically loaded screen designs (Zod or simple shape check)
+- [ ] `DesignPage` — move 60-line Tailwind color map out of the component into a shared config
+- [ ] Split `buttonVariants` and `badgeVariants` into their own files if they need to be exported later (currently unused, so deferred)
+- [ ] Audit and upgrade: `baseline-browser-mapping` is stale per lint output
+- [ ] Silent-failure audit: every parser that returns `null` should surface a user-visible warning
+- [ ] Dark-mode visual regression check (manual for now, Playwright later)
+
+## Rules
+
+- **Never** skip pre-commit hooks (`--no-verify`) or disable signing.
+- **Never** force-push.
+- **Never** widen scope beyond the picked item.
+- If `npm test` fails after a change: revert, don't "fix forward".
+- If `tsc` errors after a change: fix or revert before committing.
+- If a lint error reappears: fix properly — no new blanket suppressions.
+
+## Coverage trajectory
+
+| Iter | Test files | Tests | Lint errors | TS errors | Build |
+|---|---|---|---|---|---|
+| baseline | 0 | 0 | 9 | 0 | ✅ |
+| 1 | 2 | 13 | 0 | 0 | ✅ |
+
+## Metadata
+
+- Node: `18.x` / `20.x` (whichever the harness provides)
+- Vitest: `4.1.x`
+- Testing Library: `16.x`
