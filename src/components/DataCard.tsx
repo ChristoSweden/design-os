@@ -3,39 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ChevronDown } from 'lucide-react'
 import { EmptyState } from '@/components/EmptyState'
-
-interface DataMeta {
-  models: Record<string, string>
-  relationships: string[]
-}
+import {
+  extractMeta,
+  getDataWithoutMeta,
+  countRecords,
+} from '@/lib/data-card'
 
 interface DataCardProps {
   data: Record<string, unknown> | null
-}
-
-function extractMeta(data: Record<string, unknown>): DataMeta | null {
-  const meta = data._meta as DataMeta | undefined
-  if (meta && typeof meta === 'object' && meta.models && meta.relationships) {
-    return meta
-  }
-  return null
-}
-
-function getDataWithoutMeta(data: Record<string, unknown>): Record<string, unknown> {
-  const rest = { ...data }
-  delete rest._meta
-  return rest
-}
-
-function countRecords(data: Record<string, unknown>): number {
-  // Count arrays at the top level as record collections (excluding _meta)
-  let count = 0
-  for (const [key, value] of Object.entries(data)) {
-    if (key !== '_meta' && Array.isArray(value)) {
-      count += value.length
-    }
-  }
-  return count
 }
 
 export function DataCard({ data }: DataCardProps) {
