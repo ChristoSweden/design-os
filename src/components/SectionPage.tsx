@@ -6,40 +6,25 @@ import { EmptyState } from '@/components/EmptyState'
 import { PhaseWarningBanner } from '@/components/PhaseWarningBanner'
 import { SpecCard } from '@/components/SpecCard'
 import { DataCard } from '@/components/DataCard'
-import { StepIndicator, type StepStatus } from '@/components/StepIndicator'
+import { StepIndicator } from '@/components/StepIndicator'
 import { loadProductData } from '@/lib/product-loader'
 import { loadSectionData } from '@/lib/section-loader'
+import {
+  getSectionStepStatuses,
+  areRequiredSectionStepsComplete,
+  type SectionStepFlags,
+} from '@/lib/step-statuses'
 import { ChevronRight, Layout, Image, Download, ArrowRight, LayoutList } from 'lucide-react'
 
-/**
- * Determine the status of each step based on what data exists
- * Steps: 1. Section Overview (Spec), 2. Sample Data, 3. Screen Designs, 4. Screenshots
- */
-function getStepStatuses(sectionData: ReturnType<typeof loadSectionData> | null): StepStatus[] {
-  const hasSpec = !!sectionData?.specParsed
-  const hasData = !!sectionData?.data
-  const hasScreenDesigns = !!(sectionData?.screenDesigns && sectionData.screenDesigns.length > 0)
-  const hasScreenshots = !!(sectionData?.screenshots && sectionData.screenshots.length > 0)
-
-  const steps: boolean[] = [hasSpec, hasData, hasScreenDesigns, hasScreenshots]
-  const firstIncomplete = steps.findIndex((done) => !done)
-
-  return steps.map((done, index) => {
-    if (done) return 'completed'
-    if (index === firstIncomplete) return 'current'
-    return 'upcoming'
-  })
-}
-
-/**
- * Check if the required steps for a section are complete (Spec, Data, Screen Designs)
- * Screenshots are optional and don't count toward completion
- */
-function areRequiredStepsComplete(sectionData: ReturnType<typeof loadSectionData> | null): boolean {
-  const hasSpec = !!sectionData?.specParsed
-  const hasData = !!sectionData?.data
-  const hasScreenDesigns = !!(sectionData?.screenDesigns && sectionData.screenDesigns.length > 0)
-  return hasSpec && hasData && hasScreenDesigns
+function sectionDataToFlags(
+  sectionData: ReturnType<typeof loadSectionData> | null
+): SectionStepFlags {
+  return {
+    hasSpec: !!sectionData?.specParsed,
+    hasData: !!sectionData?.data,
+    hasScreenDesigns: !!(sectionData?.screenDesigns && sectionData.screenDesigns.length > 0),
+    hasScreenshots: !!(sectionData?.screenshots && sectionData.screenshots.length > 0),
+  }
 }
 
 export function SectionPage() {
@@ -71,8 +56,9 @@ export function SectionPage() {
     )
   }
 
-  const stepStatuses = getStepStatuses(sectionData)
-  const requiredStepsComplete = areRequiredStepsComplete(sectionData)
+  const stepFlags = sectionDataToFlags(sectionData)
+  const stepStatuses = getSectionStepStatuses(stepFlags)
+  const requiredStepsComplete = areRequiredSectionStepsComplete(stepFlags)
 
   // Next section navigation logic
   const isLastSection = currentIndex === sections.length - 1 || currentIndex === -1
