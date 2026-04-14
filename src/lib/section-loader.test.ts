@@ -61,15 +61,40 @@ Bar.
     expect(parseSpec(md)?.useShell).toBe(false)
   })
 
-  it('honours "shell: false" without a leading dash', () => {
+  it('honours "shell: false" without a leading dash (inside Configuration)', () => {
     const md = `# Foo
 
 ## Overview
 Bar.
 
+## Configuration
 shell: false
 `
     expect(parseSpec(md)?.useShell).toBe(false)
+  })
+
+  it('does NOT honour "shell: false" outside the Configuration section', () => {
+    const md = `# Foo
+
+## Overview
+You might write shell: false in your config to disable the shell.
+
+## User Flows
+- Do the thing
+`
+    expect(parseSpec(md)?.useShell).toBe(true)
+  })
+
+  it('does NOT honour "shell: false" in a prose block before Configuration', () => {
+    const md = `# Foo
+
+## Overview
+Historically this section used shell: false but not anymore.
+
+## Configuration
+- shell: true
+`
+    expect(parseSpec(md)?.useShell).toBe(true)
   })
 
   it('is case-insensitive on "shell:" and tolerates extra whitespace', () => {
@@ -78,6 +103,7 @@ shell: false
 ## Overview
 Bar.
 
+## Configuration
 - SHELL :  FALSE
 `
     expect(parseSpec(md)?.useShell).toBe(false)
@@ -89,6 +115,7 @@ Bar.
 ## Overview
 Bar.
 
+## Configuration
 - shell: true
 `
     expect(parseSpec(md)?.useShell).toBe(true)

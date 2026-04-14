@@ -43,6 +43,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [x] `DesignPage` — Tailwind color map extracted to `src/lib/tailwind-colors.ts` as typed config + `getTailwindSwatch()` helper + 8 unit tests (iter 12)
 - [ ] Split `buttonVariants` and `badgeVariants` into their own files if they need to be exported later (currently unused, so deferred)
 - [ ] Audit and upgrade: `baseline-browser-mapping` is stale per lint output
+- [x] Scope "shell: false" detection to the Configuration section only — prevents prose/code mentions from silently disabling the app shell (iter 13)
 - [ ] Silent-failure audit: every parser that returns `null` should surface a user-visible warning
 - [ ] Dark-mode visual regression check (manual for now, Playwright later)
 
@@ -72,6 +73,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 10 | 8 | 75 | 0 | 0 | ✅ |
 | 11 | 9 | 79 | 0 | 0 | ✅ |
 | 12 | 10 | 87 | 0 | 0 | ✅ |
+| 13 | 10 | 89 | 0 | 0 | ✅ |
 
 ## Metadata
 
