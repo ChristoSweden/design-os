@@ -25,12 +25,37 @@ const exportZipFiles = import.meta.glob('/product-plan.zip', {
  * Slugify a string for use as an ID
  * Converts " & " to "-and-" to maintain semantic meaning
  */
-function slugify(str: string): string {
+export function slugify(str: string): string {
   return str
     .toLowerCase()
     .replace(/\s+&\s+/g, '-and-') // Convert " & " to "-and-" first
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
+}
+
+/**
+ * Disambiguate a set of slugs so every ID is unique. The first
+ * occurrence keeps its base slug; duplicates get `-2`, `-3`, etc.
+ *
+ * Exported so that call sites producing parallel ID lists (e.g. the
+ * roadmap section parser) can share a single canonical strategy.
+ */
+export function disambiguateSlugs(slugs: readonly string[]): string[] {
+  const seen = new Map<string, number>()
+  return slugs.map((slug) => {
+    const count = seen.get(slug) ?? 0
+    seen.set(slug, count + 1)
+    if (count === 0) return slug
+    // Find the next suffix not already taken by an earlier unique slug.
+    let suffix = count + 1
+    let candidate = `${slug}-${suffix}`
+    while (seen.has(candidate)) {
+      suffix += 1
+      candidate = `${slug}-${suffix}`
+    }
+    seen.set(candidate, 1)
+    return candidate
+  })
 }
 
 /**
@@ -120,7 +145,13 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
   if (!md || !md.trim()) return null
 
   try {
-    const sections: Section[] = []
+    interface ParsedRow {
+      title: string
+      description: string
+      order: number
+      rawSlug: string
+    }
+    const rows: ParsedRow[] = []
 
     // Match sections with pattern ### N. Title
     const sectionMatches = [...md.matchAll(/### (\d+)\.\s*(.+)\n+([\s\S]*?)(?=\n### |\n## |\n#[^#]|$)/g)]
@@ -129,21 +160,22 @@ export function parseProductRoadmap(md: string): ProductRoadmap | null {
       const order = parseInt(match[1], 10)
       const title = match[2].trim()
       const description = match[3].trim()
-
-      sections.push({
-        id: slugify(title),
-        title,
-        description,
-        order,
-      })
+      rows.push({ title, description, order, rawSlug: slugify(title) })
     }
 
-    // Sort by order
-    sections.sort((a, b) => a.order - b.order)
+    if (rows.length === 0) return null
 
-    if (sections.length === 0) {
-      return null
-    }
+    // Sort by declared order before disambiguating so slug suffixes are
+    // assigned in the same order users see the sections.
+    rows.sort((a, b) => a.order - b.order)
+
+    const uniqueIds = disambiguateSlugs(rows.map((r) => r.rawSlug))
+    const sections: Section[] = rows.map((row, i) => ({
+      id: uniqueIds[i],
+      title: row.title,
+      description: row.description,
+      order: row.order,
+    }))
 
     return { sections }
   } catch {

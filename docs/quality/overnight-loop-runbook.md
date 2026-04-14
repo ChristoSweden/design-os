@@ -33,7 +33,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 - [ ] Tests for `section-loader.parseSectionSpec` (important branching + regex)
 - [ ] Tests for `shell-loader.parseShellSpec`
 - [ ] Tests for `data-model-loader` (entity + relationship parsing)
-- [ ] Slugify collision detection in `product-loader.slugify`
+- [x] Slugify collision detection in `product-loader` — exposed `slugify` + new `disambiguateSlugs`, roadmap parser uses it (iter 4)
 - [ ] Warn when a referenced section ID in roadmap has no matching directory on disk
 - [ ] GitHub Actions CI: build + typecheck + lint + test on push
 - [ ] Remove the `eslint-disable-next-line react-hooks/static-components` comments in `ScreenDesignPage` and `ShellDesignPage` by switching to eagerly-created module-level lazy components (possible only once the parameterized cache can be flattened — may not be feasible)
@@ -61,6 +61,7 @@ Items marked with `[x]` are done; `[ ]` are pending. Add new items as you discov
 | 1 | 2 | 13 | 0 | 0 | ✅ |
 | 2 | 3 | 19 | 0 | 0 | ✅ |
 | 3 | 4 | 24 | 0 | 0 | ✅ |
+| 4 | 4 | 33 | 0 | 0 | ✅ |
 
 ## Metadata
 
