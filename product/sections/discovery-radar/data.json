@@ -1,0 +1,86 @@
+{
+  "_meta": {
+    "models": {
+      "NearbyMember": "A user who appears on the current user's radar — already filtered for privacy and within the requested radius.",
+      "MatchScore": "The composite score (0-100) used to rank nearby members. Combines shared interests, intent overlap, distance bonus, and recency bonus."
+    },
+    "relationships": [
+      "Each NearbyMember has exactly one MatchScore relative to the viewing user.",
+      "The radar shows the top 50 NearbyMembers ordered by MatchScore desc."
+    ]
+  },
+  "nearbyMembers": [
+    {
+      "id": "u_arien",
+      "displayName": "Arien Vasquez",
+      "headline": "Embedded ML for forestry · Stockholm",
+      "intent": "Looking for data engineers comfortable with edge inference + raster pipelines.",
+      "distanceMeters": 38,
+      "matchedDimension": "intent",
+      "matchScore": 92
+    },
+    {
+      "id": "u_priya",
+      "displayName": "Priya Natarajan",
+      "headline": "Designer at a bird-ID startup",
+      "intent": "Want to chat with people building accessible mobile UX in low-bandwidth environments.",
+      "distanceMeters": 71,
+      "matchedDimension": "interest",
+      "matchScore": 88
+    },
+    {
+      "id": "u_idris",
+      "displayName": "Idris Karimov",
+      "headline": "Founder · last-mile delivery",
+      "intent": "Want to meet anyone working on geospatial routing + driver UX.",
+      "distanceMeters": 154,
+      "matchedDimension": "interest",
+      "matchScore": 81
+    },
+    {
+      "id": "u_mei",
+      "displayName": "Mei Rodriguez",
+      "headline": "Solo dev, fintech infra",
+      "intent": "I'm here for the workshop on stream processing — say hi if you're into that.",
+      "distanceMeters": 220,
+      "matchedDimension": "event",
+      "matchScore": 76
+    },
+    {
+      "id": "u_jonas",
+      "displayName": "Jonas Lindqvist",
+      "headline": "Researcher · forest biodiversity",
+      "intent": "Open to chats about citizen-science + sensor networks.",
+      "distanceMeters": 412,
+      "matchedDimension": "interest",
+      "matchScore": 71
+    },
+    {
+      "id": "u_sara",
+      "displayName": "Sara Achebe",
+      "headline": "Recruiter, climate-tech",
+      "intent": "Looking for senior backend engineers for a marine-monitoring startup.",
+      "distanceMeters": 690,
+      "matchedDimension": "intent",
+      "matchScore": 64
+    },
+    {
+      "id": "u_li",
+      "displayName": "Li Hennessy",
+      "headline": "PhD student, urban acoustics",
+      "intent": "Want to talk to anyone who has shipped real-time DSP on phones.",
+      "distanceMeters": 880,
+      "matchedDimension": "interest",
+      "matchScore": 58
+    },
+    {
+      "id": "u_ravi",
+      "displayName": "Ravi Marsh",
+      "headline": "Conf speaker, ML fairness",
+      "intent": "Speaking at the workshop tomorrow — happy to chat after.",
+      "distanceMeters": 1100,
+      "matchedDimension": "event",
+      "matchScore": 53
+    }
+  ]
+}

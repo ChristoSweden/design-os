@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "models": {
+      "Profile": "The current user's own editable profile.",
+      "Interest": "A normalised tag the user has added to their profile."
+    },
+    "relationships": [
+      "A Profile has many Interests."
+    ]
+  },
+  "profile": {
+    "id": "u_self",
+    "displayName": "You",
+    "headline": "Founder · weather-resilience tooling",
+    "intent": "Building a forecast-aware ops dashboard. Want to meet meteorologists, energy traders, and infra engineers who care about mid-horizon weather.",
+    "privacyMode": "visible",
+    "interests": [
+      "Geospatial",
+      "Time-series",
+      "Climate tech",
+      "Postgres",
+      "Edge inference",
+      "DX"
+    ]
+  }
+}

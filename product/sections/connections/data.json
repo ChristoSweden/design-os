@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "models": {
+      "Connection": "A past or active link between the current user and another Gravity member."
+    },
+    "relationships": [
+      "Each Connection joins exactly two Users."
+    ]
+  },
+  "connections": [
+    {
+      "id": "c_arien",
+      "displayName": "Arien Vasquez",
+      "headline": "Embedded ML for forestry",
+      "matchedDimension": "intent",
+      "lastInteractionAt": "2026-04-14T18:22:00Z",
+      "lastSeenNearMeters": 90,
+      "lastSeenNearMinutesAgo": 12,
+      "isPinned": true
+    },
+    {
+      "id": "c_priya",
+      "displayName": "Priya Natarajan",
+      "headline": "Designer · bird-ID startup",
+      "matchedDimension": "interest",
+      "lastInteractionAt": "2026-04-14T15:04:00Z",
+      "lastSeenNearMeters": 320,
+      "lastSeenNearMinutesAgo": 70,
+      "isPinned": false
+    },
+    {
+      "id": "c_jonas",
+      "displayName": "Jonas Lindqvist",
+      "headline": "Forest biodiversity researcher",
+      "matchedDimension": "interest",
+      "lastInteractionAt": "2026-04-09T11:12:00Z",
+      "lastSeenNearMeters": null,
+      "lastSeenNearMinutesAgo": null,
+      "isPinned": false
+    },
+    {
+      "id": "c_mei",
+      "displayName": "Mei Rodriguez",
+      "headline": "Solo dev, fintech infra",
+      "matchedDimension": "event",
+      "lastInteractionAt": "2026-03-28T09:55:00Z",
+      "lastSeenNearMeters": null,
+      "lastSeenNearMinutesAgo": null,
+      "isPinned": false
+    }
+  ]
+}
