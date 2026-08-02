@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/static-components -- Route-selected Vite lazy modules intentionally remount when the design route changes. */
 import { Suspense, useMemo, useState, useRef, useCallback, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Maximize2, GripVertical, Layout, Smartphone, Tablet, Monitor } from 'lucide-react'
