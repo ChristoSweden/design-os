@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { useMemo } from 'react'
 import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
 import { loadProductData, hasExportZip } from '@/lib/product-loader'
@@ -12,7 +12,6 @@ interface PhaseConfig {
   icon: typeof FileText
   path: string
 }
-
 const phases: PhaseConfig[] = [
   { id: 'product', label: 'Product', icon: FileText, path: '/' },
   { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
@@ -152,4 +151,3 @@ export function PhaseNav() {
   )
 }
 
-export { phases }

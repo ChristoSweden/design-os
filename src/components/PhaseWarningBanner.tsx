@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useMemo } from 'react'
+import { Link } from 'react-router'
 import { AlertTriangle, X } from 'lucide-react'
 import { loadProductData } from '@/lib/product-loader'
 
@@ -17,7 +17,6 @@ function getStorageKey(productName: string): string {
 
 export function PhaseWarningBanner() {
   const productData = useMemo(() => loadProductData(), [])
-  const [isDismissed, setIsDismissed] = useState(true) // Start dismissed to avoid flash
 
   const hasDataModel = !!productData.dataModel
   const hasDesignSystem = !!(productData.designSystem?.colors || productData.designSystem?.typography)
@@ -26,12 +25,9 @@ export function PhaseWarningBanner() {
 
   const productName = productData.overview?.name || 'default-product'
   const storageKey = getStorageKey(productName)
-
-  // Check localStorage on mount
-  useEffect(() => {
-    const dismissed = localStorage.getItem(storageKey) === 'true'
-    setIsDismissed(dismissed)
-  }, [storageKey])
+  const [isDismissed, setIsDismissed] = useState(
+    () => localStorage.getItem(storageKey) === 'true',
+  )
 
   const handleDismiss = () => {
     localStorage.setItem(storageKey, 'true')

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { FileText, Boxes, Layout, LayoutList, Package, ArrowRight } from 'lucide-react'
 import type { Phase } from './PhaseNav'
 

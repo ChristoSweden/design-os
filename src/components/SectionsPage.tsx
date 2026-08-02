@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { AppLayout } from '@/components/AppLayout'
 import { EmptyState } from '@/components/EmptyState'
@@ -35,7 +35,7 @@ export function SectionsPage() {
   const navigate = useNavigate()
   const productData = useMemo(() => loadProductData(), [])
 
-  const sections = productData.roadmap?.sections || []
+  const sections = useMemo(() => productData.roadmap?.sections || [], [productData])
 
   // Calculate progress for each section
   const sectionProgressMap = useMemo(() => {
