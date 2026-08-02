@@ -12,7 +12,6 @@ interface PhaseConfig {
   icon: typeof FileText
   path: string
 }
-
 const phases: PhaseConfig[] = [
   { id: 'product', label: 'Product', icon: FileText, path: '/' },
   { id: 'data-model', label: 'Data Model', icon: Boxes, path: '/data-model' },
@@ -152,4 +151,3 @@ export function PhaseNav() {
   )
 }
 
-export { phases }
