@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "check:release": "node scripts/check-release.mjs",
+    "check": "npm run lint && npm run build && npm run check:release",
     "preview": "vite preview"
   },
   "dependencies": {
