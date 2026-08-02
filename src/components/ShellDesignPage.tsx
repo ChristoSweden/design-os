@@ -1,4 +1,5 @@
-import { Suspense, useMemo, useState, useRef, useCallback, useEffect } from 'react'
+/* eslint-disable react-hooks/static-components -- The optional product shell is a Vite-generated lazy module selected by project content. */
+import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, PanelLeft, Maximize2, GripVertical, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,8 @@ import React from 'react'
 
 const MIN_WIDTH = 320
 const DEFAULT_WIDTH_PERCENT = 100
+const shellPreviewLoader = loadShellPreview()
+const ShellPreviewComponent = shellPreviewLoader ? React.lazy(shellPreviewLoader) : null
 
 export function ShellDesignPage() {
   const navigate = useNavigate()
@@ -179,13 +182,6 @@ export function ShellDesignPage() {
  * Syncs theme with parent window via localStorage
  */
 export function ShellDesignFullscreen() {
-  const shellPreviewLoader = loadShellPreview()
-
-  const ShellPreviewComponent = useMemo(() => {
-    if (!shellPreviewLoader) return null
-    return React.lazy(shellPreviewLoader)
-  }, [shellPreviewLoader])
-
   // Sync theme with parent window
   useEffect(() => {
     const applyTheme = () => {
