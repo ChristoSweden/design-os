@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router'
 import { useMemo } from 'react'
 import { FileText, Boxes, Layout, LayoutList, Package } from 'lucide-react'
 import { loadProductData, hasExportZip } from '@/lib/product-loader'
