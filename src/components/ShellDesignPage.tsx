@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/static-components -- The optional product shell is a Vite-generated lazy module selected by project content. */
 import { Suspense, useState, useRef, useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { ArrowLeft, PanelLeft, Maximize2, GripVertical, Smartphone, Tablet, Monitor } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/ThemeToggle'
