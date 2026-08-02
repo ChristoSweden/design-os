@@ -41,6 +41,8 @@ For official support, training, and community as you use Design OS—for yoursel
 
 Read the [changelog](CHANGELOG.md)
 
+Repository release evidence and remaining gates are recorded in [Production readiness](docs/PRODUCTION_READINESS.md).
+
 [Subscribe to be notified of major new releases of Design OS](https://buildermethods.com/design-os)
 
 ---
